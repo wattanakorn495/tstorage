@@ -364,6 +364,7 @@ func (s *storage) FlushPartitions() error {
 	iterator := s.partitionList.newIterator()
 	for iterator.next() {
 		if i < defaultWritablePartitionsNum {
+			fmt.Println("partition last than default, continue");
 			i++
 			continue
 		}
@@ -371,17 +372,22 @@ func (s *storage) FlushPartitions() error {
 		if part == nil {
 			return fmt.Errorf("unexpected empty partition found")
 		}
+		fmt.Println("check memory partition");
 		memPart, ok := part.(*memoryPartition)
 		if !ok {
+			fmt.Println("ok, continue");
 			continue
 		}
 
 		if s.inMemoryMode() {
+			fmt.Println("in memory mode, remove...");
 			if err := s.partitionList.remove(part); err != nil {
 				return fmt.Errorf("failed to remove partition: %w", err)
 			}
 			continue
 		}
+		
+		fmt.Println("file path...");
 
 		// Start swapping in-memory partition for disk one.
 		// The disk partition will place at where in-memory one existed.
