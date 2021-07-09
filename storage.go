@@ -287,7 +287,7 @@ func (s *storage) getPartition() partition {
 	p := newMemoryPartition(s.wal, s.partitionDuration, s.timestampPrecision)
 	s.partitionList.insert(p)
 	go func() {
-		if err := s.flushPartitions(); err != nil {
+		if err := s.FlushPartitions(); err != nil {
 			s.logger.Printf("failed to flush in-memory partitions: %v", err)
 		}
 	}()
@@ -347,15 +347,15 @@ func (s *storage) Close() error {
 		p := newMemoryPartition(s.wal, s.partitionDuration, s.timestampPrecision)
 		s.partitionList.insert(p)
 	}
-	if err := s.flushPartitions(); err != nil {
+	if err := s.FlushPartitions(); err != nil {
 		return fmt.Errorf("failed to close storage: %w", err)
 	}
 	return nil
 }
 
-// flushPartitions persists all in-memory partitions ready to persisted.
+// FlushPartitions persists all in-memory partitions ready to persisted.
 // For the in-memory mode, just removes it from the partition list.
-func (s *storage) flushPartitions() error {
+func (s *storage) FlushPartitions() error {
 	// Keep the first two partitions as is even if they are inactive,
 	// to accept out-of-order data points.
 	i := 0
