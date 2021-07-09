@@ -53,6 +53,8 @@ type Storage interface {
 	InsertRows(rows []Row) error
 	// Close gracefully shutdowns by flushing any unwritten data to the underlying disk partition.
 	Close() error
+	
+	FlushPartitions() error
 }
 
 // Reader provides reading access to time series data.
